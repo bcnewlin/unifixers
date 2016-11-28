@@ -1,0 +1,6 @@
+{
+  "Id": "idabc123",
+  "TotalParts": 2, // Nearly always 2,
+  "PartNumber": 1, // The first part is 0,
+  "Data": "secondword"
+}
