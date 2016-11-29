@@ -5,6 +5,7 @@ import json
 import urllib
 import boto3
 import urllib2
+import os
 
 print('Loading function')
 
@@ -24,8 +25,9 @@ def lambda_handler(event, context):
         print("CONTENT TYPE: " + response['ContentType'])
         message_data = response['Body'].read()
         print("data: " + message_data)
-        url = "http://35.156.138.93"
-
+        url = os.environ['endpoint']
+        # print("ENDPOINT: " + os.environ['endpoint'])
+        
         try:
             req = urllib2.Request(url, data=message_data)
             resp = urllib2.urlopen(req)
