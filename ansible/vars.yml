@@ -22,7 +22,7 @@ ssh_key_name: blah
 
 # The name for the EC2 launch configuration and autoscaling group to be created. For more about this
 # resource, see `server.yml`
-launch_config: lc-unifixers
+launch_config: lc-unifixers-v2
 autoscaling_group: asg-unifixers
 
 # the AWS region to use, for the gameday please use eu-central-1
