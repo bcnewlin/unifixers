@@ -113,9 +113,10 @@
     launch_config_name: "{{ launch_config }}"
     health_check_type: EC2
     replace_all_instances: true
-    min_size: 1
-    max_size: 1
-    desired_capacity: 1
+    availability_zones: eu-central-1a,eu-central-1b
+    min_size: 2
+    max_size: 2
+    desired_capacity: 2
     wait_for_instances: true
     region: eu-central-1
 
