@@ -1,6 +1,6 @@
 ---
 - s3_bucket:
-    name: "{{ team_name }}-gameday"
+    name: "{{ team_name }}-incoming-requests"
     region: eu-central-1
     policy: "{{ lookup('template', 'templates/bucket_policy.json') }}"
     versioning: no
