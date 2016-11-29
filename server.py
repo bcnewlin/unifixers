@@ -116,4 +116,4 @@ if __name__ == "__main__":
 
     print ""
     # Use this to enable threading:
-    APP.run(host="0.0.0.0", port="5000", threaded=True)
+    APP.run(host="0.0.0.0", port="80", threaded=True)
