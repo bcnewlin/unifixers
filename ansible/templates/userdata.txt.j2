@@ -3,7 +3,7 @@ set -ex
 echo "STEP: installing dependencies"
 yum install -y git python-setuptools wget
 easy_install pip
-pip install Flask requests
+pip install boto3 Flask requests
 
 echo "STEP: Clone and chown app code"
 wget -O /home/ec2-user/server.py https://raw.githubusercontent.com/bcnewlin/unifixers/master/server.py
