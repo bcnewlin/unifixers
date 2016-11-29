@@ -49,21 +49,85 @@ def process_message(msg):
     processes the messages by combining and appending the kind code
     """
 
-    result = completeTable.get_item(Key={
-        'Id':msg['Id']
-        })
-    if 'Item' in result:
-        print 'Message {} exists in completed'.format(msg['Id'])
-        return 'OK'
+    try:
+        result = completeTable.get_item(Key={
+            'Id':msg['Id']
+            })
+        if 'Item' in result:
+            print 'Message {} exists in completed'.format(msg['Id'])
+            return 'OK'
+    except:
+        completeTable = dynamodb.create_table(
+            TableName='completeMessages',
+            KeySchema=[
+                {
+                    'AttributeName': 'Id',
+                    'KeyType': 'HASH'
+                }
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': 'Id',
+                    'AttributeType': 'S'
+                },
+                {
+                    'AttributeName': 'Data',
+                    'AttributeType': 'S'
+                },
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 5,
+                'WriteCapacityUnits': 5
+            }
+        )
+
 
     # Try to get the parts of the message from the MESSAGES dictionary.
     # If it's not there, create one that has None in both parts
-    result = activeTable.get_item(Key={
-        'Id':msg['Id'],
-        'PartNumber':msg['PartNumber']
-        })
-    if 'Item' not in result:
-        print 'Message {} does not exist in active'.format(msg['Id'])
+    try:
+        result = activeTable.get_item(Key={
+            'Id':msg['Id'],
+            'PartNumber':msg['PartNumber']
+            })
+        if 'Item' not in result:
+            print 'Message {} does not exist in active'.format(msg['Id'])
+            activeTable.put_item(Item=msg)
+    except:
+        activeTable = dynamodb.create_table(
+            TableName='completeMessages',
+            KeySchema=[
+                {
+                    'AttributeName': 'Id',
+                    'KeyType': 'HASH'
+                },
+                {
+                    'AttributeName': 'PartNumber',
+                    'KeyType': 'RANGE'
+                },
+            ],
+            AttributeDefinitions=[
+                {
+                    'AttributeName': 'Id',
+                    'AttributeType': 'S'
+                },
+                {
+                    'AttributeName': 'PartNumber',
+                    'AttributeType': 'N'
+                },
+                {
+                    'AttributeName': 'TotalParts',
+                    'AttributeType': 'N'
+                },
+                {
+                    'AttributeName': 'Data',
+                    'AttributeType': 's'
+                }
+            ],
+            ProvisionedThroughput={
+                'ReadCapacityUnits': 5,
+                'WriteCapacityUnits': 5
+            }
+        )
         activeTable.put_item(Item=msg)
 
     results = activeTable.query(KeyConditionExpression=Key('Id').eq(msg['Id']))

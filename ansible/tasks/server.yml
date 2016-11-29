@@ -99,7 +99,7 @@
       - "{{ web_sg.group_id }}"
       - "{{ ssh_sg.group_id }}"
     instance_type: t2.micro
-    instance_profile_name: qls-624332-621e41e64e2b6433-PlayerInstanceProfile-1TZN47MJWE403
+    instance_profile_name: qls-625193-a330bee97faea081-PlayerInstanceProfile-1MM85S770Y6NW
     instance_monitoring: yes
     user_data: "{{ lookup('template', 'templates/userdata.txt.j2') }}"
 
@@ -118,3 +118,5 @@
     desired_capacity: 1
     wait_for_instances: true
     region: eu-central-1
+
+
