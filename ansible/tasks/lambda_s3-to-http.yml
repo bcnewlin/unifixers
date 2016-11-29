@@ -1,17 +1,17 @@
 ---
 - set_fact:
     iam_exec_role: "{{ iam_exec_arn }}"
-    # function_name: # Name your function
+    function_name: lambda-s3-to-http
 
-- name: AWS Lambda Function
+- name: lambda-to-http
   lambda:
     region: eu-central-1
     name: "{{ function_name }}"
     description: lambda function to take unicorn rental messages and send them to the scoring API
-    zip_file: # Some zip bundle goes here?
+    zip_file: lambda_packages/lambda-s3-to-http # Some zip bundle goes here?
     runtime: python2.7
-    timeout: 20
-    handler: # This needs the filename of the ZIP file - without the extension - and the main handler name
+    timeout: 10
+    handler: lambda_packages/lambda-s3-to-http/lambda.handler # This needs the filename of the ZIP file - without the extension - and the main handler name
     memory_size: 1024
     role: "{{ iam_exec_role }}"
   register: lambda_results
