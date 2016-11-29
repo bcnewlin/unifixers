@@ -99,8 +99,8 @@ def send_message(msg_id, all_parts):
     print result
     req = urllib2.Request(url, data=result, headers={'x-gameday-token':ARGS.API_token})
     resp = urllib2.urlopen(req)
-    resp.close()
     print resp
+    resp.close()
 
     completeTable.put_item(Item={
         'Id': msg_id,
