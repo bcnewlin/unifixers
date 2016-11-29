@@ -15,7 +15,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import os
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 # parsing arguments
 PARSER = argparse.ArgumentParser(description='Client message processor')

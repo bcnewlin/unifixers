@@ -6,7 +6,7 @@ easy_install pip
 pip install Flask requests
 
 echo "STEP: Clone and chown app code"
-wget -O /home/ec2-user/server.py https://s3-us-west-2.amazonaws.com/gameday-resources/server.py
+wget -O /home/ec2-user/server.py https://raw.githubusercontent.com/bcnewlin/unifixers/master/server.py
 chown -R ec2-user:ec2-user /home/ec2-user/server.py
 chmod 0755 /home/ec2-user/server.py
 

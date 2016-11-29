@@ -2,12 +2,12 @@
 # Pick a UNIQUE team name. This is important because it will be used in the
 # names of things, so take some time to come up with a good one.
 # Don't take BuffaloBill, because that's mine.
-team_name: <TheTeamName>
+team_name: unifixers
 
 scoring:
   # In your gameday team dashboard, there will be an API token that looks like
   # this. To get points you MUST CHANGE THIS
-  api_token: "<TheAPITokenGivenToTheTeam>"
+  api_token: "bc405a4b23"
   # The scoring URL should not need to be changed
   url: "https://dashboard.cash4code.net/score"
 
@@ -18,11 +18,11 @@ scoring:
 # gameday AWS account
 
 # Go to the EC2 console and make an SSH keypair, then put its name here
-ssh_key_name: <SSHKeyName>
+ssh_key_name: blah
 
 # The name for the EC2 launch configuration and autoscaling group to be created. For more about this
 # resource, see `server.yml`
-#launch_config: <NameOfLaunchConfig>
-#autoscaling_group: <NameOfAutoscalingGroup>
+launch_config: lc-unifixers-v2
+autoscaling_group: asg-unifixers
 
 # the AWS region to use, for the gameday please use eu-central-1
