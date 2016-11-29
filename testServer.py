@@ -6,11 +6,12 @@ Client which receives the requests
 from flask import Flask, request
 import logging
 import argparse
+import json
 
 APP = Flask(__name__)
 
 # creating flask route for type argument
-@APP.route('/', methods=['POST'])
+@APP.route('/abc123', methods=['POST'])
 def main_handler():
     """
     main routing for requests
@@ -24,7 +25,7 @@ def process_message(msg):
     """
 
     print "Received message:"
-    json.dumps(msg)
+    print json.dumps(msg)
 
     return 'OK'
 

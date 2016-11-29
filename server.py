@@ -11,10 +11,9 @@ from flask import Flask, request
 import logging
 import argparse
 import urllib2
-import boto
-from boto.dynamodb2.table import Table
-from boto.dynamodb2.fields import HashKey
-from collections import OrderedDict
+import boto3
+from boto3.dynamodb.conditions import Key, Attr
+import os
 
 # logging.basicConfig(level=logging.DEBUG)
 
@@ -26,10 +25,10 @@ PARSER.add_argument('API_base', help="the base URL for the game API")
 ARGS = PARSER.parse_args()
 
 # defining global vars
-activeTable = Table('activeMessages') # A dictionary that contains message parts
-completeTable = Table('completeMessages')
+dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+activeTable = dynamodb.Table('activeMessages')
+completeTable = dynamodb.Table('completeMessages')
 API_BASE = ARGS.API_base
-# 'https://csm45mnow5.execute-api.us-west-2.amazonaws.com/dev'
 
 APP = Flask(__name__)
 
@@ -47,24 +46,26 @@ def process_message(msg):
     processes the messages by combining and appending the kind code
     """
 
-    completed = completeTable.get_item(Id=msg['Id'])
-    if completed:
+    result = completeTable.get_item(Key={
+        'Id':msg['Id']
+        })
+    if 'Item' in result:
+        print 'Message {} exists in completed'.format(msg['Id'])
         return 'OK'
 
     # Try to get the parts of the message from the MESSAGES dictionary.
     # If it's not there, create one that has None in both parts
-    part = activeTable.get_item(Id=msg['Id'], partNumber=msg['PartNumber'])
-    if part:
-        return 'OK'
+    result = activeTable.get_item(Key={
+        'Id':msg['Id'],
+        'PartNumber':msg['PartNumber']
+        })
+    if 'Item' not in result:
+        print 'Message {} does not exist in active'.format(msg['Id'])
+        activeTable.put_item(Item=msg)
 
-    activeTable.put_item(data=msg)
-
-    # store this part of the message in the correct part of the list
-    parts[part_number] = data
-
-    results = activeTable.query_2(Id__eq=msg['Id'])
+    results = activeTable.query(KeyConditionExpression=Key('Id').eq(msg['Id']))
     if results:
-        all_parts = list(results)
+        all_parts = sorted(results['Items'], key=lambda t: t['PartNumber'])
         if len(all_parts) == all_parts[0]['TotalParts']:
             send_message(msg['Id'], all_parts)
 
@@ -72,12 +73,14 @@ def process_message(msg):
 
 def send_message(msg_id, all_parts):
 
-    orderedParts = OrderedDict(sorted(all_parts.items(), key=lambda t: t['PartNumber']))
-
     result = ''
-    for part in orderedParts:
-        result = "{}{}".format(data, part['Data'])
-        part.delete()
+    for part in all_parts:
+        result = "{}{}".format(result, part['Data'])
+        activeTable.delete_item(
+            Key={
+                'Id': part['Id'],
+                'PartNumber': part['PartNumber']
+            })
 
     # app.logger.debug("got a complete message for %s" % msg_id)
     print "all parts found"
@@ -95,9 +98,9 @@ def send_message(msg_id, all_parts):
     req = urllib2.Request(url, data=result, headers={'x-gameday-token':ARGS.API_token})
     resp = urllib2.urlopen(req)
     resp.close()
-    print response
+    print resp
 
-    completeTable.put_item(data={
+    completeTable.put_item(Item={
         'Id': msg_id,
         'Data': result
         })
@@ -111,5 +114,6 @@ if __name__ == "__main__":
     # and fail ALB healthchecks, but whatever I know I'm getting fired on Friday.
     # APP.run(host="0.0.0.0", port="80")
 
+    print ""
     # Use this to enable threading:
     APP.run(host="0.0.0.0", port="5000", threaded=True)
