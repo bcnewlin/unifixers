@@ -13,7 +13,7 @@
 - ec2_vpc_net_facts:
     region: eu-central-1
     filters:
-      "tag:Name": Production VPC
+      "tag:Name": unifixers-vpc
   register: network
 
 - set_fact:
