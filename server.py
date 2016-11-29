@@ -33,13 +33,15 @@ API_BASE = ARGS.API_base
 APP = Flask(__name__)
 
 # creating flask route for type argument
-@APP.route('/', methods=['POST'])
+@APP.route('/', methods=['GET', 'POST'])
 def main_handler():
     """
     main routing for requests
     """
-
-    return process_message(request.get_json())
+    if request.method == 'POST':
+        return process_message(request.get_json())
+    else:
+        return "hello friend"
 
 def process_message(msg):
     """
