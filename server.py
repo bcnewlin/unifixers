@@ -48,14 +48,12 @@ def process_message(msg):
     """
     processes the messages by combining and appending the kind code
     """
+    global completeTable
+    global activeTable
 
     try:
-        result = completeTable.get_item(Key={
-            'Id':msg['Id']
-            })
-        if 'Item' in result:
-            print 'Message {} exists in completed'.format(msg['Id'])
-            return 'OK'
+        if not completeTable.creation_date_time:
+            raise Exception()
     except:
         completeTable = dynamodb.create_table(
             TableName='completeMessages',
@@ -81,17 +79,23 @@ def process_message(msg):
             }
         )
 
+    try:
+        result = completeTable.get_item(Key={
+            'Id':msg['Id']
+            })
+        if 'Item' in result:
+            print 'Message {} exists in completed'.format(msg['Id'])
+            return 'OK'
+    except:
+        print "Error processing message: {}".format(json.dumps(msg))
+        return 'Bad Request'
+
 
     # Try to get the parts of the message from the MESSAGES dictionary.
     # If it's not there, create one that has None in both parts
     try:
-        result = activeTable.get_item(Key={
-            'Id':msg['Id'],
-            'PartNumber':msg['PartNumber']
-            })
-        if 'Item' not in result:
-            print 'Message {} does not exist in active'.format(msg['Id'])
-            activeTable.put_item(Item=msg)
+        if not activeTable.creation_date_time:
+            raise Exception()
     except:
         activeTable = dynamodb.create_table(
             TableName='activeMessages',
@@ -128,7 +132,18 @@ def process_message(msg):
                 'WriteCapacityUnits': 5
             }
         )
-        activeTable.put_item(Item=msg)
+
+    try:
+        result = activeTable.get_item(Key={
+            'Id':msg['Id'],
+            'PartNumber':msg['PartNumber']
+            })
+        if 'Item' not in result:
+            print 'Message {} does not exist in active'.format(msg['Id'])
+            activeTable.put_item(Item=msg)
+    except:
+        print "Error processing message: {}".format(json.dumps(msg))
+        return 'Bad Request'
 
     results = activeTable.query(KeyConditionExpression=Key('Id').eq(msg['Id']))
     if results:
