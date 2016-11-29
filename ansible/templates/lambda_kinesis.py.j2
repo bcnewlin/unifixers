@@ -46,7 +46,7 @@ def process_message(msg):
             })
         if 'Item' in result:
             print 'Message {} exists in completed'.format(msg['Id'])
-            return 'OK'
+            return
     except:
         COMPLETE_TABLE = DYNAMODB.create_table(
             TableName='completeMessages',
@@ -127,10 +127,7 @@ def process_message(msg):
         if len(all_parts) == all_parts[0]['TotalParts']:
             send_message(msg['Id'], all_parts)
 
-    return 'OK'
-
 def send_message(msg_id, all_parts):
-
     result = ''
     for part in all_parts:
         result = "{}{}".format(result, part['Data'])
@@ -162,8 +159,6 @@ def send_message(msg_id, all_parts):
         'Id': msg_id,
         'Data': result
         })
-
-    return 'OK'
 
 if __name__ == "__main__":
 

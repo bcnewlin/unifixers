@@ -26,6 +26,8 @@ ARGS = PARSER.parse_args()
 
 # defining global vars
 dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+completeTable = dynamodb.Table('completeMessages')
+activeTable = dynamodb.Table('activeMessages')
 API_BASE = ARGS.API_base
 
 APP = Flask(__name__)
@@ -47,7 +49,6 @@ def process_message(msg):
     processes the messages by combining and appending the kind code
     """
 
-    completeTable = dynamodb.Table('completeMessages')
     try:
         result = completeTable.get_item(Key={
             'Id':msg['Id']
@@ -83,7 +84,6 @@ def process_message(msg):
 
     # Try to get the parts of the message from the MESSAGES dictionary.
     # If it's not there, create one that has None in both parts
-    activeTable = dynamodb.Table('activeMessages')
     try:
         result = activeTable.get_item(Key={
             'Id':msg['Id'],
