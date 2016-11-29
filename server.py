@@ -82,8 +82,8 @@ def process_message(msg):
         print result
         req = urllib2.Request(url, data=result, headers={'x-gameday-token':ARGS.API_token})
         resp = urllib2.urlopen(req)
+        print resp
         resp.close()
-        print response
 
     return 'OK'
 
