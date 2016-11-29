@@ -12,7 +12,7 @@ import logging
 import argparse
 import urllib2
 
-logging.basicConfig(filename='server.log',level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 # parsing arguments
 PARSER = argparse.ArgumentParser(description='Client message processor')
